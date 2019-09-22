@@ -3,11 +3,6 @@
 #include <stdbool.h>
 #include "cola.h"
 
-#define FALLO -1
-#define EXITO 0
-#define COLA_VACIA 0
-#define UNICO_NODO 1
-
 
 /* 
  * Crea una cola reservando la memoria necesaria
@@ -20,12 +15,8 @@ cola_t* cola_crear(){
 		return NULL;
 	}
 
-	cola->nodo_inicio = malloc(sizeof(nodo_t));
 	cola->nodo_inicio = NULL;
-
-	cola->nodo_fin = malloc(sizeof(nodo_t));
 	cola->nodo_fin = NULL;
-
 	(cola->cantidad) = COLA_VACIA;
 	
 	return cola;
@@ -34,7 +25,9 @@ cola_t* cola_crear(){
 // Pre C.: Se debe recibir un puntero al struct cola_t cola.
 // Post C.: Devuelve 'true' si hay algún error que invalide la cola (es decir si no existe la cola, si el tope es negativo o si 'tope > tamaño').
 bool hay_error(cola_t* cola){
-	return ((cola == NULL) || ((cola->cantidad) < COLA_VACIA) || (((cola->nodo_inicio) == NULL) && ((cola->nodo_fin) != NULL)) || (((cola->nodo_inicio) != NULL) && ((cola->nodo_fin) == NULL)));
+	return ((cola == NULL) || ((cola->cantidad) < COLA_VACIA) ||
+		   (((cola->nodo_inicio) == NULL) && ((cola->nodo_fin) != NULL)) ||
+		   (((cola->nodo_inicio) != NULL) && ((cola->nodo_fin) == NULL)));
 }
 
 /* 
@@ -46,7 +39,7 @@ bool cola_vacia(cola_t* cola){
 	if(hay_error(cola)){
 		return true;
 	}
-	return ((cola->cantidad == COLA_VACIA) && (cola->nodo_inicio == NULL) && (cola->nodo_fin == NULL));
+	return (cola->cantidad == COLA_VACIA);
 }
 
 /* 
@@ -65,12 +58,13 @@ int cola_encolar(cola_t* cola, void* elemento){
 
 	if(cola_vacia(cola)){
 		cola->nodo_inicio = nodo;
+		cola->nodo_fin = nodo;
 	}
 
+	cola->nodo_fin->siguiente = nodo;
+	cola->nodo_fin = nodo;
 	nodo->siguiente = NULL;
 	nodo->elemento = elemento;
-	cola->nodo_fin = nodo;
-	cola->nodo_fin->siguiente = nodo;
 	(cola->cantidad)++;
 
 	return EXITO;
@@ -81,11 +75,15 @@ int cola_encolar(cola_t* cola, void* elemento){
  * Devuelve 0 si pudo desencolar o -1 si no pudo.
  */
 int cola_desencolar(cola_t* cola){
-	if(hay_error(cola)){
+	if((hay_error(cola)) || cola_vacia(cola)){
 		return FALLO;
 	}
 
 	nodo_t* nodo_aux = cola->nodo_inicio;
+	if(nodo_aux == NULL){
+		return FALLO;
+	}
+
 	cola->nodo_inicio = cola->nodo_inicio->siguiente;
 	free(nodo_aux);
 
@@ -131,7 +129,5 @@ void cola_destruir(cola_t* cola){
 	while(!cola_vacia(cola)){
 		cola_desencolar(cola);
 	}
-	//free(cola->nodo_inicio);
-	//free(cola->nodo_fin);
 	free(cola);
 }

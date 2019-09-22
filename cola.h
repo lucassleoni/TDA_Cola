@@ -3,6 +3,11 @@
 
 #include <stdbool.h>
 
+#define FALLO -1
+#define EXITO 0
+#define COLA_VACIA 0
+#define UNICO_NODO 1
+
 typedef struct nodo {
 	void* elemento;
 	struct nodo* siguiente;
