@@ -3,12 +3,7 @@
 
 #include <stdbool.h>
 
-#define FALLO -1
-#define EXITO 0
-#define COLA_VACIA 0
-#define UNICO_NODO 1
-
-typedef struct nodo {
+typedef struct nodo{
 	void* elemento;
 	struct nodo* siguiente;
 } nodo_t;
@@ -62,6 +57,6 @@ void* cola_primero(cola_t* cola);
  * Destruye la cola liberando toda la memoria reservada
  * por la cola.
  */
-void cola_destruir(cola_t*);
+void cola_destruir(cola_t* cola);
 
 #endif /* __COLA_H__ */

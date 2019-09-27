@@ -3,8 +3,9 @@ TDA Cola (Nodos Simplemente Enlazados)
 La implementación del TDA Cola incluído en 'TDA Cola (Lucas Leoni).zip' posee los siguientes programas:
     1) 'cola.h' es la biblioteca que incluye las firmas de las funciones primitivas para el funcionamiento de la cola.
     2) 'cola.c' es el programa con la implementación de la cola.
-    3) 'makefile' es el programa que facilita el acceso a las líneas de compilación y ejecución de la cola, las pruebas y Valgrind.
-    4) 'Consigna' es la consigna del trabajo pŕactico.
+    3) 'minipruebas_cola.c' es el programa que contiene las pruebas que testean el funcionamiento de la cola implementada.
+    4) 'makefile' es el programa que facilita el acceso a las líneas de compilación y ejecución de la cola, las pruebas y Valgrind.
+    5) 'Consigna' es la consigna del trabajo pŕactico.
 
 
 Funciones del TDA cola
@@ -12,124 +13,105 @@ Funciones del TDA cola
 Aclaración: todas las funciones utilizadas verifican (previo a ser ejecutadas) que no haya ningún error,
             (ver 'Funciones Propias > Verificación de errores generales').
 
-1) Creación de la cola ---> pila_t* pila_crear();
-     Crea la estructra 'pila_t cola'.
-     Devuelve un puntero a la estructura 'pila_t cola' inicializada y reserva la memeoria necesaria para su almacenamiento en el Heap.
+1) Creación de la cola ---> cola_t* cola_crear();
+     Crea la estructra 'cola_t cola'.
+     Devuelve un puntero a la estructura 'cola_t cola' inicializada y reserva la memoria necesaria para su almacenamiento en el Heap.
      Devuelve NULL en caso de haber habido un error al crear la cola.
 
-2) Apilar elementos ---> int pila_apilar(pila_t* cola, void* elemento);
-     Apila el elemento recibido, redimensionando la cola en caso de que esta se encuentre llena antes de apilar
-     (ver 'Compilación y Convenciones > Criterio de Redimensionamiento').
+2) Encolar elementos ---> int cola_encolar(cola_t* cola, void* elemento);
+     Encola el elemento recibido, resevando la memoria necesaria para el nuevo nodo que lo contiene y actualizando los punteros correspondientes.
+     Si la cola esta vacía, tanto el 'inicio' como el 'fin' de la cola apuntan al nuevo nodo (el único).
+     Disminuye la cantidad de elementos de la cola.
      Devuelve '0' si la operación tuvo éxito y '-1' si falló.
 
-3) Desapilar elementos ---> int pila_desapilar(pila_t* cola);
-     Desapila el elemento en la última posición de la cola y verifica si es necesario redimensionar
-     (ver 'Compilación y Convenciones > Criterio de Redimensionamiento').
+3) Desencolar elementos ---> int cola_desencolar(cola_t* cola);
+     Desencola el elemento en la primera posición de la cola (posición inicio), actualizando los puntero correspondientes y liberando
+     la memoria ocupada por el nodo desencolado.
+     Disminuye la cantidad de elementos de la cola.
      Devuelve '0' si la operación tuvo éxito y '-1' si falló.
 
-4) cola vacía ---> bool pila_vacia(pila_t* cola);
-     Determina si la cola está vacía (es decir, si tiene 0 elementos).
+4) cola vacía ---> bool cola_vacia(cola_t* cola);
+     Determina si la cola está vacía (es decir, si tiene 0 elementos/nodos).
      Devuelve 'true' si la cola está vacía o es nula, y 'false' en cualquier otro caso.
 
-5) Cantidad de elementos ---> int pila_cantidad(pila_t* cola);
-     Devuelve la cantidad de elementos presentes en la cola.
+5) Cantidad de elementos ---> int cola_cantidad(cola_t* cola);
+     Devuelve la cantidad de elementos/nodos presentes en la cola.
      Devuelve '0' si la cola es nula o está vacía.
 
-6) Tope de la cola ---> void* pila_tope(pila_t* cola);
-     Devuelve el último elemento de la cola (el elemento situado en la posición tope, sea cual sea su tipo de dato).
+6) Primer elemento de la cola ---> void* cola_primero(cola_t* cola);
+     Devuelve un puntero al primer elemento de la cola (el elemento situado en la posición 'inicio', sea cual sea su tipo de dato).
      Devuelve NULL si la cola es nula o está vacía.
 
-7) Destrucción de la cola ---> void pila_destruir(pila_t* cola);
-     Destruye la estructura 'pila_t cola' (liberando toda la memoria previamente ocupada/reservada por/para ella en el Heap).
+7) Destrucción de la cola ---> void cola_destruir(cola_t* cola);
+     En caso de no estar vacía, desencola todos los elmentos/nodos de la cola hasta que no tenga ninguno.
+     Luego, destruye la estructura 'cola_t cola' (liberando la memoria ocupada por ella).
 
 
-Funciones Propias (para modularizar la implementacíon de la cola)
+Función Propia (para modularizar la implementacíon de la cola)
 
-1) Verificación de errores generales ---> bool hay_error(pila_t* cola);
+1) Verificación de errores generales ---> bool hay_error(cola_t* cola);
      Devuelve 'true' si:
-        1.1) La estructura 'pila_t cola' es nula.
-        1.2) El vector de elementos es nulo.
-        1.3) El tope del vector es menor a 0.
-        1.4) El tope del vector es mayor al tamaño de la cola.
-
-2) Verificación de cola llena ---> bool pila_llena(pila_t* cola);
-     Determina si la cola está llena.
-     Devuelve 'true' si la cola está llena (es decir, si tiene tantos elementos como espacios en ella).
-     Si la cola no existe devolverá 'false'.
-
-3) Redimensionamiento de la cola ---> int pila_redimensionar(pila_t* cola, int nuevo_tamanio);
-     Redimensiona el tamaño de la cola según el tamaño/proporción recibido.
-     Devuelve '0' si pudo redimensionar o '-1' en caso contrario.
+        1.1) La estructura 'cola_t cola' es nula.
+        1.2) La cantidad de elementos es menor a 0.
+        1.3) El 'nodo_inicio' es nulo y el 'nodo_fin' no lo es, o viceversa.
 
 
 Pruebas (Testing)
 
 En la carpeta se incluye una serie de pruebas que testean casos bordes, intermedios y normales del funcionamiento de la cola.
-Todas las funciones que requieren que la estructura 'pila_t cola' no sea nula, verifican previamente si esta fue creada con éxito y,
+Todas las funciones que requieren que la estructura 'cola_t cola' no sea nula, verifican previamente si esta fue creada con éxito y,
 de no ser así, imprimen por pantalla que la prueba no pudo ser llevada a cabo.
 Si una prueba es ejecutada, destruye la estructura al finalizar, liberando la memoria utilizada para la misma.
 Las pruebas (funciones void) implementadas son las siguientes:
 
 1) ejecutar_caso_feliz();
-     Es la prueba provista por la cátedra, cuyo funcionamiento es apilar 6 elementos y, por cada vez que apila, imprimir por pantalla
-     la cantidad de elementos que la cola posee (para verificar si efectivamente fueron todos apilados). Luego, imprime el elemento
-     en la posición tope y lo despila, mostrando el nuevo tamaño de la cola (siguiendo este algoritmo hasta que el tamaño sea 0),
-     para finalmente destruir la estructura y liberar la memoria utilizada.
+     Es la prueba provista por la cátedra, cuyo funcionamiento es encolar 4 elementos, imprimiendo luego por pantalla la cantidad de nodos
+     que la cola posee (para verificar si efectivamente fueron todos encolados). Después, desencola uno de ellos y vuelve a imprimir
+     la cantidad (para testear la funcion que desencola). Verifica si la cola está vacía (la respuesta debería de 'NO', dado que ahora posee 3 nodos).
+     Finalmente, imprime el elemento en la posición 'inicio', para terminar destruyendo la estructura y liberar la memoria utilizada.
 
      Esta prueba testea:
-        1.1) La creación de la estructura 'pila_t cola'.
-        1.2) El apilamiento/desapilamiento de varios elementos.
-        1.3) Si las funciones 'pila_cantidad' y 'pila_tope' funcionan correctamente.
-        1.4) La destrucción de la estructura 'pila_t cola' (verificada al correr el comando 'make valgrind').
+        1.1) La creación de la estructura 'cola_t cola'.
+        1.2) El encolamiento/desencolamiento de varios elementos.
+        1.3) Si las funciones 'cola_cantidad', 'cola_vacia' y 'cola_primero' funcionan correctamente.
+        1.4) La destrucción de la estructura 'cola_t cola' (verificada al correr el comando 'make valgrind').
     
-2) desapilar_pila_vacia_deberia_devolver_NULL();
-     Intenta desapilar un elemento de la cola vacía e imprime por pantalla si efectivamente la función 'pila_desapilar' devuelve NULL.
+2) desencolar_cola_vacia_deberia_devolver_NULL();
+     Intenta desencolar un elemento de la cola vacía e imprime por pantalla si efectivamente la función 'cola_desencolar' devuelve NULL.
 
-3) llenar_pila_y_volver_a_apilar_deberia_redimensionar();
-     Llena la cola hasta que tenga tantos elementos como espacios disponibles (es decir, hasta que el tope sea igual al tamaño).
-     Luego, apila un elemento más y verifica (imprimiendo por pantalla) si la cola fue redimensionada según la convención establecida
-     (ver 'Compilación y Convenciones > Criterio de Redimensionamiento').
-
-4) desapilar_hasta_la_mitad_de_su_tamanio_deberia_redimensionar();
-     Apila 11 elementos (uno más que la capacidad inicial) para redimensionar la cola. Luego, desapila el último (tal que la cantidad
-     de elementos sea igual a la mitad de su tamaño), teniendo que redimensionar y verifica (imprimiendo por pantalla) si la
-     redimensión se corresponde con la convención establecida (ver 'Compilación y Convenciones > Criterio de Redimensionamiento').
-
-5) si_la_pila_es_nula_deberia_fallar_apilar_y_desapilar();
-     Se inicializa un puntero 'pila_t* cola' en NULL (un cola nula) y se verifica si apilar y desapilar devuelven ambos
+3) si_la_cola_es_nula_deberia_fallar_encolar_y_desencolar();
+     Se inicializa un puntero 'cola_t* cola' en NULL (un cola nula) y se verifica si las funciones encolar y desencolar devuelven ambos
      el código error establecido (-1), imprimiendo el resultado de la prueba por pantalla.
 
-6) ver_tope_de_pila_nula_deberia_devolver_NULL();
-     Se inicializa un puntero 'pila_t* cola' en NULL (un cola nula) y se verifica si ver el tope de la cola devuelve NULL,
+4) ver_primer_elemento_de_cola_nula_deberia_devolver_NULL();
+     Se inicializa un puntero 'cola_t* cola' en NULL (un cola nula) y se verifica si ver el primer elemento/nodo de la cola devuelve NULL,
      imprimiendo el resultado de la prueba por pantalla.
 
-7) si_la_pila_esta_vacia_entonces_pila_cantidad_deberia_devolver_cero();
-     Se crea una estructura 'pila_t* cola' a la que no se le apila ningún elemento, para verificar (imprimiendo por pantalla el resultado
-     de la prueba) si la función 'pila_cantidad' devuelve '0'.
+5) si_la_cola_esta_vacia_entonces_cola_cantidad_deberia_devolver_cero();
+     Se crea una estructura 'cola_t* cola' a la que no se le encola ningún elemento/nodo, para verificar (imprimiendo por pantalla el resultado
+     de la prueba) si la función 'cola_cantidad' devuelve '0'.
 
-8) si_lleno_y_vacio_la_pila_el_tamanio_no_deberia_ser_inferior_al_inicial();
-     Se crea una estructura 'pila_t* cola', que es llenada y luego vaciada, para verificar (imprimiendo por pantalla el resultado de la prueba)
-     si su tamaño es igual al tamaño inicial.
+6) si_encolo_y_desencolo_la_misma_cantidad_de_elementos_deberian_salir_en_el_orden_que_fueron_encolados();
+     Se crea una estructura 'cola_t* cola', un 'int vector[]' de 5 elementos y un 'int contador_coincidencias'. Se encolan todos los elementos del vector
+     Luego, se crea una estructura de control iterativa que compara el elemento devuelvo por la función 'cola_primero' con el primer elemento
+     del vector; si estos son iguales, el contador aumenta en una unidad. Después, este elemento se desencola y vuelve a comenzar el ciclo hasta
+     que la cola esté vacía.
+     Finalmente, se imprime por pantalla el resultado de la prueba (si el contador de coincidencias es igual a la cantidad de elementos
+     encolados/desencolados, la prueba fue superada con éxito).
 
 
 Compilación y Convenciones
 
 1) Tamaño de la cola
-     Inicialmente, la cola se creará con un tamaño mínimo de 10 espacios libres y totalmente vacía.
-     El mismo nunca será inferior al inicial (incluso si se la vacía por completo).
+     Inicialmente, la cola se creará totalmente vacía (0 elementos/nodos).
 
-2) Criterio de Redimensionamiento
-     2.1) Si la cola está llena y se intenta apilar un elemento más, se duplicará su tamaño y luego se apilará el elemento.
-     2.2) Si se desapilan elementos hasta llegar a la mitad de su tamaño, el mismo se reducirá a la cantidad de elementos presentes en la cola.
-          Caso borde: Al redimensionar, la cola nunca quedará con un tamaño inferior al inicial.
-
-3) Makefile
+2) Makefile
    La carpeta cuenta con un programa 'makefile' que posee los siguientes comandos:
      3.1) 'make compile' compilará el programa 'cola.c' junto con las pruebas que testean su funcionamiento, ejecutando la línea de compilación:
-              gcc -std=c99 -Wall -Wconversion -Wtype-limits -pedantic -Werror -O0 cola.c minipruebas_pila_vd.c -o pila_vd -g
+              gcc -std=c99 -Wall -Wconversion -Wtype-limits -pedantic -Werror -O0 cola.c minipruebas_cola.c -o cola_ne -g
 
      3.2) 'make cola' compilará el programa con la línea mencionada en el punto (3.1) y luego ejecutará las pruebas (incluídas en la carpeta) con la línea:
-              ./pila_vd
+              ./cola_ne
 
      3.2) 'make valgrind' ejecutrá Valgrind (mostrando los resultados de las pruebas por pantalla) con la línea:
-              valgrind --leak-check=full --track-origins=yes --show-reachable=yes ./pila_vd
+              valgrind --leak-check=full --track-origins=yes --show-reachable=yes ./cola_ne

@@ -3,6 +3,11 @@
 #include <stdbool.h>
 #include "cola.h"
 
+#define FALLO -1
+#define EXITO 0
+#define COLA_VACIA 0
+#define UNICO_NODO 1
+
 
 /* 
  * Crea una cola reservando la memoria necesaria
