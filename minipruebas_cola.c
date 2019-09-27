@@ -1,8 +1,16 @@
-//#include <stdio.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include "cola.h"
 
-#define PRUEBA_4 "la prueba #4"
+// Constantes:
+    #define PRUEBA_4 "la prueba #4"
+    #define PRUEBA_5 "la prueba #5"
+
+    #define FALLO -1
+    #define EXITO 0
+    #define COLA_VACIA 0
+    #define UNICO_NODO 1
+    #define MAX_VECTOR 5
 
 // Pre C.: ---
 // Post C.: Muestra por pantalla el error al intentar crear la estructura cola_t cola.
@@ -99,15 +107,47 @@ void si_la_cola_esta_vacia_entonces_cola_cantidad_deberia_devolver_cero(){
     cola_destruir(cola);
 }
 
+void si_encolo_y_desencolo_la_misma_cantidad_de_elementos_deberian_salir_en_el_orden_que_fueron_encolados(){
+    cola_t* cola = cola_crear();
+    if(!cola){
+        imprimir_error_de_prueba(PRUEBA_5);
+        return;
+    }
+
+    int elementos[MAX_VECTOR] = {1, 2, 3, 4, 5};
+    int contador_coincidencias = 0;
+    int i = 0;
+
+    printf("\nPrueba #5: Si encolo y desencolo la misma cantidad de elementos, estos salen en el orden en que entraron.\n");
+    for(int i = 0; i < MAX_VECTOR; i++){
+        cola_encolar(cola, &elementos[i]);
+    }
+
+    while((!cola_vacia(cola)) && (i < MAX_VECTOR)){
+        if(*(int*)cola_primero(cola) == elementos[i]){
+            contador_coincidencias++;
+        }
+        cola_desencolar(cola);
+        i++;
+    }
+
+    printf("\t%s: al encolar y desencolar la misma cantidad de elementos, estos %s en el orden en que entraron.\n",
+        (contador_coincidencias == MAX_VECTOR?"EXITO":"FALLO"),
+        (contador_coincidencias == MAX_VECTOR?"salen":"no salen"));
+
+    cola_destruir(cola);
+}
+
 int main(){
     system("clear");
 
-    ejecutar_caso_feliz();
+    //ejecutar_caso_feliz();
 
     desencolar_cola_vacia_deberia_devolver_NULL();
     si_la_cola_es_nula_deberia_fallar_encolar_y_desencolar();
     ver_primer_elemento_de_cola_nula_deberia_devolver_NULL();
     si_la_cola_esta_vacia_entonces_cola_cantidad_deberia_devolver_cero();
+    si_encolo_y_desencolo_la_misma_cantidad_de_elementos_deberian_salir_en_el_orden_que_fueron_encolados();
 
     return 0;
 }
