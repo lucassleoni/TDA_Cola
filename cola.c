@@ -28,7 +28,7 @@ cola_t* cola_crear(){
 }
 
 // Pre C.: Se debe recibir un puntero al struct cola_t cola.
-// Post C.: Devuelve 'true' si hay algún error que invalide la cola (es decir si no existe la cola, si el tope es negativo o si 'tope > tamaño').
+// Post C.: Devuelve 'true' si hay algún error que invalide la cola (es decir si no existe la cola, si la cantidad de elementos es menor a 0, etc).
 bool hay_error(cola_t* cola){
 	return ((cola == NULL) || ((cola->cantidad) < COLA_VACIA) ||
 		   (((cola->nodo_inicio) == NULL) && ((cola->nodo_fin) != NULL)) ||
